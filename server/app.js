@@ -1,20 +1,20 @@
 const express = require('express');
-const fs = require('fs');
+const path = require('path');
+const { createLogger } = require('./logger');
+
 const app = express();
 
-app.use((req, res, next) => {
-// write your logging code here
-
+const logger = createLogger({
+    logDir: path.join(__dirname, 'logs'),
+    maxLines: 3,
 });
+
+app.use(logger.requestLogger);
 
 app.get('/', (req, res) => {
-// write your code to respond "ok" here
-
+    res.status(200).send("ok");
 });
 
-app.get('/logs', (req, res) => {
-// write your code to return a json object containing the log data here
-
-});
+app.get("/logs", logger.getLogs);
 
 module.exports = app;
